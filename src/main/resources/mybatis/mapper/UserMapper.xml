@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.lewen.dao.UserMapper">
+	<resultMap type="cn.com.lewen.model.User" id="userMapper">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="user_name" property="username" jdbcType="CHAR"/>
+		<result column="password" property="password" jdbcType="CHAR"/>
+		<result column="mobile" property="mobile" jdbcType="CHAR"/>
+		<result column="email" property="email" jdbcType="CHAR"/>
+		<result column="is_guide" property="isGuide" jdbcType="BIT"/>
+		<result column="is_admin" property="isAdmin" jdbcType="BIT"/>
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+   	</resultMap>
+	
+	<sql id="User_Base_Column_List">
+		t.id,t.user_name,t.password,t.mobile,t.email,t.is_guide,t.is_admin,t.create_time,t.modified_time
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into user (user_name,
+		password,mobile,email,is_guide,is_admin)
+		values ( #{username,jdbcType=CHAR},
+		#{password,jdbcType=CHAR},
+		#{mobile,jdbcType=CHAR},
+		#{email,jdbcType=CHAR},
+		#{isGuide,jdbcType=BIT},
+		#{isAdmin,jdbcType=BIT})
+	</insert>
+	
+	<select id="findUserByUsername" resultType="java.lang.Integer">
+		select
+		<include refid="User_Base_Column_List" />
+		 from user t where t.user_name = #{username}  
+	</select>
+	
+	<select id="findUser" resultMap="userMapper">
+		select
+		<include refid="User_Base_Column_List" />
+		 from user t where t.user_name = #{username} and t.password = #{password} 
+	</select>
+	
+	
+</mapper>
