@@ -26,14 +26,21 @@ public class LoginController {
 
 	@RequestMapping("/dologin")
 	@ResponseBody
-	public Response<Boolean> dologin(String uname,String pwd,HttpServletRequest request){
+	public Response<Boolean> dologin(String uname,String pwd,
+			String code,HttpServletRequest request){
 		if(StringUtils.isBlank(uname)||
-				StringUtils.isBlank(pwd)){
-			logger.error("登录入参不合法，uname:",uname,",password:",pwd);
+				StringUtils.isBlank(pwd) || StringUtils.isBlank(code)){
+			logger.error("登录入参不合法，uname:",uname,",password:",pwd,",code:",code);
 			return new Response<Boolean>(ResponseCode.PARAM_ILLEGAL.getCode(),
 					ResponseCode.PARAM_ILLEGAL.getMsg());
 		}		
 		try{
+			String sessionCode = (String) request.getSession().getAttribute("code");
+			if(!code.equals(sessionCode)){
+				logger.error("验证码输入错误，session中验证码为：",sessionCode);
+				return new Response<Boolean>(ResponseCode.PARAM_ILLEGAL.getCode(),
+						ResponseCode.PARAM_ILLEGAL.getMsg());
+			}
 			boolean result = loginService.login(uname, pwd);
 			logger.info("登录用户结束，结果为：",result);
 			//将登录信息放入session中
